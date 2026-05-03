@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
@@ -30,7 +29,9 @@ export default function App() {
       setUser(res.data)
       localStorage.setItem('user', JSON.stringify(res.data))
     } catch (err) {
-      alert('Login failed: ' + err.response?.data?.error)
+      console.error('Login error details:', err)
+      const errorMsg = err.response?.data?.error || err.message || 'Unknown error'
+      alert('Login failed: ' + errorMsg)
     }
   }
 
