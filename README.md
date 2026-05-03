@@ -80,35 +80,83 @@ Add these headers in the first row:
 
 ## Deployment
 
-### Deploy Frontend on Vercel
+### Quick Deploy Summary
+1. **Backend** → Render.com (free tier available)
+2. **Frontend** → Vercel (free tier available)
 
-1. Push your code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Import your repository
-4. Set environment variables:
-   - `VITE_API_URL=https://your-backend-url.com/api`
-5. Deploy
+### Step-by-Step Deployment
 
-### Deploy Backend on Render.com
+#### 1. Deploy Backend on Render.com
 
-1. Go to [render.com](https://render.com)
-2. Create new **Web Service**
-3. Connect your GitHub repository
-4. Set environment variables:
-   - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-   - `GOOGLE_PRIVATE_KEY`
-   - `GOOGLE_SHEET_ID`
-5. Build command: `npm install`
-6. Start command: `npm start`
-7. Deploy
+1. Go to [render.com](https://render.com) and sign up
+2. Click **"New Web Service"**
+3. Connect your GitHub repo (Time-counter)
+4. Configure:
+   - **Name:** `time-tracker-backend`
+   - **Root Directory:** `backend`
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+5. Add **Environment Variables:**
+   ```
+   PORT=3001
+   GOOGLE_SERVICE_ACCOUNT_EMAIL=your-email@project.iam.gserviceaccount.com
+   GOOGLE_PRIVATE_KEY=your-private-key
+   GOOGLE_SHEET_ID=your-sheet-id
+   ```
+6. Click **"Create Web Service"** and wait for deploy (~2-3 min)
+7. Copy the backend URL (e.g., `https://time-tracker-backend.onrender.com`)
 
-### Update Frontend After Backend Deployment
-Once backend is deployed, update `frontend/.env`:
-```
-VITE_API_URL=https://your-backend-url.com/api
-```
+#### 2. Deploy Frontend on Vercel
 
-Then redeploy frontend to Vercel.
+1. Go to [vercel.com](https://vercel.com) and sign up with GitHub
+2. Click **"Import Project"** and select your Time-counter repo
+3. Configure:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `frontend`
+4. Add **Environment Variable:**
+   ```
+   VITE_API_URL=https://time-tracker-backend.onrender.com/api
+   (Replace with your actual backend URL from Step 1)
+   ```
+5. Click **"Deploy"** and wait for deploy (~1-2 min)
+6. Your frontend is now live! 🎉
+
+#### 3. Alternative Backend Deployment Options
+
+**Option A: Railway.app** (easiest, generous free tier)
+- Sign up at [railway.app](https://railway.app)
+- Connect GitHub repo
+- Set environment variables
+- Deploy
+
+**Option B: Heroku** (now paid, but still an option)
+- Sign up at [heroku.com](https://heroku.com)
+- Use Heroku CLI or connect GitHub
+- Deploy
+
+### Important Notes
+
+- **Google Sheets is optional** - app works without it (data in memory)
+- **Free tier limits:**
+  - Render.com: Spins down after 15 min of inactivity (free tier)
+  - Vercel: No time limits on free tier
+  - Railway.app: $5 free credits per month
+- **For production:** Consider upgrading to paid tiers for always-on backend
+
+### Troubleshooting Deployment
+
+**"Backend not connecting" error:**
+- Verify `VITE_API_URL` matches your backend URL
+- Check backend logs on Render/Railway dashboard
+- Ensure backend is running (not spun down)
+
+**"CORS errors":**
+- Already configured in backend (CORS enabled for all origins)
+- If issues persist, check backend is accessible from browser
+
+**Data not persisting:**
+- Set up Google Sheets integration (optional)
+- Without it, data resets when backend restarts
 
 ## Usage
 
