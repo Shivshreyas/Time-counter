@@ -3,17 +3,34 @@ import axios from 'axios'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
+function formatTime(decimalHours) {
+  const hours = Math.floor(decimalHours)
+  const minutes = Math.round((decimalHours - hours) * 60)
+  return `${hours}h ${minutes}m`
+}
+
 export default function App() {
   const [user, setUser] = useState(null)
   const [entries, setEntries] = useState([])
   const [todaySummary, setTodaySummary] = useState(null)
   const [weeklySummary, setWeeklySummary] = useState(null)
   const [view, setView] = useState('tracker') // tracker, history, weekly
+  const [theme, setTheme] = useState('light')
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
     if (stored) setUser(JSON.parse(stored))
+    const storedTheme = localStorage.getItem('theme') || 'light'
+    setTheme(storedTheme)
+    document.documentElement.setAttribute('data-theme', storedTheme)
   }, [])
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
 
   useEffect(() => {
     if (user) {
@@ -82,6 +99,9 @@ export default function App() {
         <h1>⏱️ Time Tracker</h1>
         <div className="user-info">
           <span>{user.name}</span>
+          <button className="theme-btn" onClick={toggleTheme} title="Toggle theme">
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           <button onClick={() => { setUser(null); localStorage.clear() }}>Logout</button>
         </div>
       </header>
@@ -107,12 +127,12 @@ export default function App() {
             <div className="stats-grid">
               <div className="stat-card">
                 <h4>Today</h4>
-                <p className="stat-value">{todaySummary.hours.toFixed(2)}<span>h</span></p>
+                <p className="stat-value">{formatTime(todaySummary.hours)}</p>
                 <p className="stat-label">{todaySummary.sessions} session{todaySummary.sessions !== 1 ? 's' : ''}</p>
               </div>
               <div className="stat-card">
                 <h4>This Week</h4>
-                <p className="stat-value">{weeklySummary.totalHours.toFixed(2)}<span>h</span></p>
+                <p className="stat-value">{formatTime(weeklySummary.totalHours)}</p>
                 <p className="stat-label">{weeklySummary.daysWorked} day{weeklySummary.daysWorked !== 1 ? 's' : ''}</p>
               </div>
             </div>
@@ -125,9 +145,9 @@ export default function App() {
           <h2>Weekly Summary</h2>
           {weeklySummary ? (
             <div className="summary-card">
-              <p>Total hours this week: <strong>{weeklySummary.totalHours.toFixed(2)}h</strong></p>
+              <p>Total hours this week: <strong>{formatTime(weeklySummary.totalHours)}</strong></p>
               <p>Days worked: <strong>{weeklySummary.daysWorked}</strong></p>
-              <p>Average hours/day: <strong>{(weeklySummary.totalHours / weeklySummary.daysWorked || 0).toFixed(2)}h</strong></p>
+              <p>Average hours/day: <strong>{formatTime(weeklySummary.totalHours / weeklySummary.daysWorked || 0)}</strong></p>
             </div>
           ) : <p>No data yet</p>}
         </div>
