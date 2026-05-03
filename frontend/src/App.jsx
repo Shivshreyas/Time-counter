@@ -103,11 +103,18 @@ export default function App() {
             {user.status === 'in' ? 'Clock Out' : 'Clock In'}
           </button>
 
-          {todaySummary && (
-            <div className="summary-card">
-              <h3>Today's Summary</h3>
-              <p>Hours worked: <strong>{todaySummary.hours.toFixed(2)}h</strong></p>
-              <p>Sessions: <strong>{todaySummary.sessions}</strong></p>
+          {todaySummary && weeklySummary && (
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h4>Today</h4>
+                <p className="stat-value">{todaySummary.hours.toFixed(2)}<span>h</span></p>
+                <p className="stat-label">{todaySummary.sessions} session{todaySummary.sessions !== 1 ? 's' : ''}</p>
+              </div>
+              <div className="stat-card">
+                <h4>This Week</h4>
+                <p className="stat-value">{weeklySummary.totalHours.toFixed(2)}<span>h</span></p>
+                <p className="stat-label">{weeklySummary.daysWorked} day{weeklySummary.daysWorked !== 1 ? 's' : ''}</p>
+              </div>
             </div>
           )}
         </div>
